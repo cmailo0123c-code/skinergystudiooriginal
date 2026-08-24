@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Línea Body — Skinergy</title>
+<meta name="description" content="Bienestar facial Las Condes: Body Relax, Body Sculpt y Body Drain en Skinergy, tratamientos corporales para soltar tensión, esculpir y drenar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .body-grid{ display:flex; flex-direction:column; gap:24px; }
+  .body-row{
+    --tiltX:0deg; --tiltY:0deg; --lift:0px; --mx:50%; --my:50%;
+    position:relative;
+    display:grid; grid-template-columns:0.9fr 1.1fr; gap:0; border-radius:8px; overflow:hidden;
+    background:var(--white);
+    border:1px solid rgba(31,27,24,.08);
+    transform:perspective(1200px) rotateX(var(--tiltX)) rotateY(var(--tiltY)) translate3d(0,var(--lift),0);
+    transition:transform .5s var(--ease), box-shadow .5s var(--ease), border-color .5s var(--ease);
+    will-change:transform;
+  }
+  .body-row:hover{ box-shadow:0 22px 40px -20px rgba(31,27,24,.28); border-color:var(--coral-soft); }
+  .body-row::after{ content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background:radial-gradient(280px circle at var(--mx) var(--my), rgba(255,87,87,.08), transparent 70%); opacity:0; transition:opacity .4s var(--ease); }
+  .body-row:hover::after{ opacity:1; }
+  .body-row:nth-child(even){ direction:rtl; }
+  .body-row:nth-child(even) > *{ direction:ltr; }
+  .body-row .photo{ aspect-ratio:4/5; overflow:hidden; }
+  .body-row .photo img{ width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.06); transition:transform 1.1s var(--ease), filter 1.1s var(--ease); }
+  .body-row:hover .photo img{ transform:scale(1.06); filter:grayscale(0) contrast(1.02) saturate(1.05); }
+  .body-row .copy{ padding:44px; display:flex; flex-direction:column; justify-content:center; }
+  .body-row .copy .n{ font-family:'Fraunces',serif; font-style:italic; color:var(--coral); font-size:15px; margin-bottom:12px; }
+  .body-row .price-row{ display:flex; align-items:baseline; gap:8px; margin-bottom:10px; }
+  .body-row .price-row .price{ font-family:'Fraunces',serif; font-size:22px; color:var(--coral-deep); font-weight:500; }
+  .body-row .price-row .duration{ font-size:12px; color:var(--ink-soft); font-weight:700; letter-spacing:.03em; text-transform:uppercase; }
+  .body-row .copy h3{ font-size:clamp(24px,3vw,32px); margin-bottom:14px; }
+  .body-row .copy p{ color:var(--ink-soft); font-size:15px; line-height:1.7; margin-bottom:20px; max-width:420px; }
+  .body-row .tags{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:24px; }
+  .body-row .tags span{ font-size:11.5px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; padding:6px 12px; border-radius:100px; background:var(--cream-warm); color:var(--ink); }
+  @media(max-width:820px){
+    .body-row{ grid-template-columns:1fr; }
+    .body-row:nth-child(even){ direction:ltr; }
+    .body-row .copy{ padding:32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap nav-row">
+    <a href="index.html" class="logo"><img src="logo-wordmark.svg" alt="Skinergy — Energía para tu piel" width="118" height="26"></a>
+    <nav class="links">
+      <a href="facial.html">Línea Facial</a>
+      <a href="body.html" class="active">Línea Body</a>
+      <a href="about.html">Sobre mí</a>
+      <a href="faq.html">FAQ &amp; Agenda</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn" href="https://wa.me/56944476609?text=Hola%2C%20quiero%20agendar%20una%20sesi%C3%B3n%20body%20en%20Skinergy" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.005c5.46 0 9.9-4.45 9.9-9.92C21.93 6.45 17.5 2 12.04 2Zm0 18.15h-.004a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.42 5.83c0 4.55-3.7 8.23-8.25 8.23Zm4.52-6.17c-.25-.12-1.47-.72-1.7-.81-.23-.08-.4-.12-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.04-.38-1.99-1.22-.73-.65-1.23-1.46-1.37-1.71-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42-.14-.01-.31-.01-.48-.01-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.41 1.02 2.58.12.17 1.76 2.69 4.27 3.77.6.26 1.06.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28Z"/></svg>
+        <span class="long">Agendar hora</span>
+      </a>
+      <button class="burger" id="burgerBtn" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-inner">
+      <a href="facial.html">Línea Facial</a>
+      <a href="body.html" class="active">Línea Body</a>
+      <a href="about.html">Sobre mí</a>
+      <a href="faq.html">FAQ &amp; Agenda</a>
+      <a class="btn" href="https://wa.me/56944476609?text=Hola%2C%20quiero%20agendar%20una%20sesi%C3%B3n%20en%20Skinergy" target="_blank" rel="noopener">Agendar por WhatsApp</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <span class="eyebrow load-reveal">Bienestar corporal Las Condes · Línea Body</span>
+      <h1 class="load-reveal">Del rostro <em>al cuerpo</em></h1>
+      <p class="lead load-reveal">Masajes manuales que liberan tensión, modelan y drenan, con la misma consciencia que distingue a Skinergy. Trabajamos con el método de Renata França, la masajista brasileña que revolucionó la industria con un protocolo de resultados visibles desde la primera sesión — hoy reconocido y aplicado en el mundo entero.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="body-grid">
+        <div class="body-row reveal reveal-rand">
+          <div class="photo"><img src="body-sculpt-900.webp" srcset="body-sculpt-900.webp 900w, body-sculpt-1300.webp 1300w" sizes="(max-width:820px) 92vw, 45vw" alt="Body Sculpt en Skinergy" loading="lazy" decoding="async"></div>
+          <div class="copy">
+            <span class="n">01</span>
+            <div class="price-row"><span class="price">$65.000</span><span class="duration">· 60 min</span></div>
+            <h3>Body Sculpt — Masaje Modelador</h3>
+            <p>Técnica Renata França: maniobras exclusivas con presión firme y ritmo lento que trabajan la reorganización de los adipocitos y mejoran el contorno corporal desde la primera sesión. Con tratamiento continuo, la silueta se vuelve progresivamente más curvilínea y esculpida.</p>
+            <div class="tags"><span>Objetivo: modelar y tonificar</span></div>
+            <a class="btn ghost" href="https://wa.me/56944476609?text=Hola%2C%20quiero%20agendar%20Body%20Sculpt%20en%20Skinergy" target="_blank" rel="noopener">Agendar Body Sculpt</a>
+          </div>
+        </div>
+
+        <div class="body-row reveal reveal-rand">
+          <div class="photo"><img src="body-drain-900.webp" srcset="body-drain-900.webp 900w, body-drain-1300.webp 1300w" sizes="(max-width:820px) 92vw, 45vw" alt="Body Drain en Skinergy" loading="lazy" decoding="async"></div>
+          <div class="copy">
+            <span class="n">02</span>
+            <div class="price-row"><span class="price">$65.000</span><span class="duration">· 60 min</span></div>
+            <h3>Body Drain — Masaje Drenaje Linfático</h3>
+            <p>Técnica Renata França: ritmo, presión, bombeo y deslizamientos diferenciados que potencian la circulación, disminuyen la hinchazón y ayudan a eliminar toxinas — con resultados visibles desde la primera sesión. Con tratamiento continuo notarás una silueta más fina y menor retención de líquidos.</p>
+            <div class="tags"><span>Objetivo: drenar y desinflamar</span></div>
+            <a class="btn ghost" href="https://wa.me/56944476609?text=Hola%2C%20quiero%20agendar%20Body%20Drain%20en%20Skinergy" target="_blank" rel="noopener">Agendar Body Drain</a>
+          </div>
+        </div>
+
+        <div class="body-row reveal reveal-rand">
+          <div class="photo"><img src="body-relax-900.webp" srcset="body-relax-900.webp 900w, body-relax-1300.webp 1300w" sizes="(max-width:820px) 92vw, 45vw" alt="Body Relax en Skinergy" loading="lazy" decoding="async"></div>
+          <div class="copy">
+            <span class="n">03</span>
+            <div class="price-row"><span class="price">$65.000</span><span class="duration">· 60 min</span></div>
+            <h3>Body Relax — Masaje Relajante</h3>
+            <p>Técnica Renata França inspirada en técnicas milenarias, dedicada a promover un relajamiento profundo de la musculatura. Alivia dolores, disminuye tensión y ansiedad, y ayuda a reducir el cortisol — promoviendo la liberación de serotonina y endorfina.</p>
+            <div class="tags"><span>Objetivo: liberar tensión y descansar</span></div>
+            <a class="btn ghost" href="https://wa.me/56944476609?text=Hola%2C%20quiero%20agendar%20Body%20Relax%20en%20Skinergy" target="_blank" rel="noopener">Agendar Body Relax</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote-section">
+    <div class="wrap quote-wrap">
+      <span class="eyebrow">¿No sabes por dónde partir?</span>
+      <blockquote class="reveal">Cuéntanos cómo se siente tu cuerpo hoy y te ayudamos a elegir entre <b>Body Relax</b>, <b>Body Sculpt</b> o <b>Body Drain</b> — o arma tu propio ritual combinando los tres.</blockquote>
+      <a class="btn reveal" style="margin-top:32px;" href="https://wa.me/56944476609?text=Hola%2C%20quiero%20agendar%20una%20sesi%C3%B3n%20body%20en%20Skinergy" target="_blank" rel="noopener">
+        Escribir por WhatsApp
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div>
+        <a href="index.html" class="logo"><img src="logo-wordmark.svg" alt="Skinergy — Energía para tu piel" width="118" height="26"></a>
+        <p style="margin-top:14px; max-width:240px; font-size:13.5px; color:var(--ink-soft); line-height:1.6;">Experiencia boutique de bienestar facial y corporal en Las Condes.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h5>Explorar</h5>
+          <a href="facial.html">Línea Facial</a>
+          <a href="body.html">Línea Body</a>
+          <a href="about.html">Sobre mí</a>
+          <a href="faq.html">FAQ &amp; Agenda</a>
+        </div>
+        <div class="footer-col">
+          <h5>Contacto</h5>
+          <a href="https://wa.me/56944476609" target="_blank" rel="noopener">+56 9 4447 6609</a>
+          <a href="https://www.instagram.com/skinergy.studio/" target="_blank" rel="noopener">@skinergy.studio</a>
+          <a href="mailto:Skinergy.studio1@gmail.com">Skinergy.studio1@gmail.com</a>
+          <a href="faq.html#ubicacion">Vitacura 2902, Las Condes</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Skinergy Studio. Todos los derechos reservados.</p>
+      <p>Diseño &amp; desarrollo — Skinergy</p>
+    </div>
+  </div>
+</footer>
+
+<div class="fab-group" id="fabGroup">
+  <div class="fab-options">
+    <a class="fab-item" href="https://www.instagram.com/skinergy.studio/" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+    <a class="fab-item" href="https://wa.me/56944476609?text=Hola%2C%20quiero%20agendar%20una%20sesi%C3%B3n%20body%20en%20Skinergy" target="_blank" rel="noopener" aria-label="WhatsApp">
+      <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21h.005c5.46 0 9.9-4.45 9.9-9.92C21.93 6.45 17.5 2 12.04 2Zm0 18.15h-.004a8.2 8.2 0 0 1-4.18-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.19 8.19 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.83 2.42a8.19 8.19 0 0 1 2.42 5.83c0 4.55-3.7 8.23-8.25 8.23Zm4.52-6.17c-.25-.12-1.47-.72-1.7-.81-.23-.08-.4-.12-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.04-.38-1.99-1.22-.73-.65-1.23-1.46-1.37-1.71-.15-.25-.02-.38.11-.5.11-.11.25-.29.37-.44.13-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.42-.14-.01-.31-.01-.48-.01-.17 0-.44.06-.67.31-.23.25-.87.85-.87 2.08 0 1.23.89 2.41 1.02 2.58.12.17 1.76 2.69 4.27 3.77.6.26 1.06.41 1.43.53.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.08.15-1.18-.06-.1-.23-.16-.48-.28Z"/></svg>
+    </a>
+  </div>
+  <button class="fab-toggle" id="fabToggle" aria-label="Mostrar contacto" aria-expanded="false">
+    <span class="pulse"></span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 15l6-6 6 6"/></svg>
+  </button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
