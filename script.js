@@ -7,6 +7,19 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
 const prefersFullMotion = !reduceMotion && hasFinePointer;
 
+// Reveals set `will-change` via CSS so the browser promotes the layer for the
+// entrance transition, but leaving it on forever wastes GPU memory on pages
+// with many cards/images. Drop it back to `auto` once the named property's
+// transition actually finishes.
+function releaseWillChangeOnEnd(el, propertyName){
+  if(!el) return;
+  el.addEventListener('transitionend', function handler(e){
+    if(e.target !== el || e.propertyName !== propertyName) return;
+    el.style.willChange = 'auto';
+    el.removeEventListener('transitionend', handler);
+  });
+}
+
 /* ---------- 1. TEXT MOTION — reveal por línea + palabra ----------
    Envuelve cada <br>-línea de un heading en una "máscara" (overflow:hidden)
    y cada palabra dentro en su propio span, para poder animarlas con
@@ -61,13 +74,20 @@ function splitTextMotion(el){
 function initTextMotion(){
   const heroHeadings = document.querySelectorAll('.hero h1, .page-hero h1');
   const sectionHeadings = document.querySelectorAll('.section-head h2, .quote-wrap blockquote');
+  const logoWords = document.querySelectorAll('.logo-word');
 
   heroHeadings.forEach(splitTextMotion);
   sectionHeadings.forEach(splitTextMotion);
+  logoWords.forEach(splitTextMotion);
 
   // Hero: revela apenas carga la página (parte del "cinematic intro")
   heroHeadings.forEach(h => {
     requestAnimationFrame(() => setTimeout(() => h.classList.add('split-in'), 260));
+  });
+
+  // Logo: mismo reveal que el hero, siempre visible (no espera scroll)
+  logoWords.forEach(w => {
+    requestAnimationFrame(() => setTimeout(() => w.classList.add('split-in'), 260));
   });
 
   // Headings de sección: revelan al entrar en viewport
@@ -79,6 +99,10 @@ function initTextMotion(){
     });
   }, { threshold: 0.35 });
   sectionHeadings.forEach(h => headingIO.observe(h));
+
+  [...heroHeadings, ...sectionHeadings, ...logoWords].forEach(el => {
+    el.querySelectorAll('.word-inner').forEach(w => releaseWillChangeOnEnd(w, 'transform'));
+  });
 }
 
 /* ---------- 2. IMAGE MOTION — clip-path + scale + blur→sharp ----------
@@ -106,7 +130,7 @@ function initImageMotion(){
       if(!e.isIntersecting) return;
       const wrap = e.target;
       const img = wrap.querySelector('img');
-      const reveal = () => wrap.classList.add('mask-in');
+      const reveal = () => { wrap.classList.add('mask-in'); releaseWillChangeOnEnd(wrap, 'clip-path'); };
       if(img.complete && img.naturalWidth > 0){
         requestAnimationFrame(reveal);
       } else {
@@ -198,6 +222,38 @@ function initDarkSpotlight(){
   });
 }
 
+/* ---------- 8. NAV INDICATOR — barra activa que se desplaza entre links ----------
+   En vez de un underline que aparece/desaparece por link, un único elemento
+   se mueve (transform + width) del link anterior al nuevo. En desktop además
+   seguí al hover y vuelve al activo al salir. Entre páginas (navegación real,
+   no SPA) el View Transitions API lo mueve solo vía view-transition-name. */
+function initNavIndicator(){
+  const nav = document.querySelector('nav.links');
+  const active = nav && nav.querySelector('a.active');
+  if(!nav || !active) return;
+
+  const indicator = document.createElement('span');
+  indicator.className = 'nav-indicator';
+  indicator.setAttribute('aria-hidden', 'true');
+  nav.appendChild(indicator);
+
+  function moveTo(el){
+    const navRect = nav.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    indicator.style.width = r.width + 'px';
+    indicator.style.transform = `translate3d(${(r.left - navRect.left).toFixed(1)}px,0,0)`;
+  }
+
+  moveTo(active);
+  window.addEventListener('resize', () => moveTo(active), { passive:true });
+  if(document.fonts) document.fonts.ready.then(() => moveTo(active));
+
+  if(prefersFullMotion){
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('mouseenter', () => moveTo(a)));
+    nav.addEventListener('mouseleave', () => moveTo(active));
+  }
+}
+
 /* ============================================================
    INICIALIZACIÓN
    ============================================================ */
@@ -209,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMagnetic();
   initCardTilt();
   initDarkSpotlight();
+  initNavIndicator();
 });
 
 /* ============================================================
@@ -304,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const loadEls = document.querySelectorAll('.load-reveal');
   loadEls.forEach((el, i) => {
-    setTimeout(() => el.classList.add('in'), 150 + i * 120);
+    setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); }, 150 + i * 120);
   });
 });
 
@@ -319,12 +376,13 @@ const io = new IntersectionObserver((entries) => {
       const delay = Math.random() * 500;
       const rot = (Math.random() * 6 - 3).toFixed(2);
       el.style.setProperty('--rot', rot + 'deg');
-      setTimeout(() => el.classList.add('in'), delay);
+      setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); }, delay);
     } else if(el.classList.contains('reveal-seq')){
       const delay = Number(el.dataset.seqDelay || 0);
-      setTimeout(() => el.classList.add('in'), delay);
+      setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); }, delay);
     } else {
       el.classList.add('in');
+      releaseWillChangeOnEnd(el, 'filter');
     }
     io.unobserve(el);
   });
