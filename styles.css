@@ -173,9 +173,13 @@ header.scrolled{
    columnas laterales siempre pesan igual, y la columna central (ancho de
    su contenido) queda centrada de verdad en el ancho total del nav. */
 .nav-row{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; }
-.logo{ display:inline-flex; align-items:center; justify-self:start; }
-nav.links{ justify-self:center; }
-.nav-cta{ justify-self:end; }
+/* grid-column explícito en los 3 — sin esto, en mobile nav.links pasa a
+   display:none y el auto-placement de Grid corre a .nav-cta a la columna
+   del medio (el hueco que deja el link oculto), en vez de quedarse en la
+   derecha: quedaba pegado al centro con un espacio vacío hasta el borde. */
+.logo{ display:inline-flex; align-items:center; grid-column:1; justify-self:start; }
+nav.links{ grid-column:2; justify-self:center; }
+.nav-cta{ grid-column:3; justify-self:end; }
 .logo-word{
   display:inline-block;
   font-family:'Fraunces', serif;
