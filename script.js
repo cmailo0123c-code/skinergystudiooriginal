@@ -1,9 +1,10 @@
 /* ============================================================
    SKINERGY — PREMIUM MOTION SYSTEM
-   Vanilla JS, sin dependencias. Todo respeta prefers-reduced-motion.
+   Vanilla JS, sin dependencias. Movimiento forzado a pedido: ignora
+   prefers-reduced-motion, las animaciones siempre corren completas.
    ============================================================ */
 
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduceMotion = false;
 const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
 const prefersFullMotion = !reduceMotion && hasFinePointer;
 
@@ -74,20 +75,13 @@ function splitTextMotion(el){
 function initTextMotion(){
   const heroHeadings = document.querySelectorAll('.hero h1, .page-hero h1');
   const sectionHeadings = document.querySelectorAll('.section-head h2, .quote-wrap blockquote');
-  const logoWords = document.querySelectorAll('.logo-word');
 
   heroHeadings.forEach(splitTextMotion);
   sectionHeadings.forEach(splitTextMotion);
-  logoWords.forEach(splitTextMotion);
 
   // Hero: revela apenas carga la página (parte del "cinematic intro")
   heroHeadings.forEach(h => {
     requestAnimationFrame(() => setTimeout(() => h.classList.add('split-in'), 260));
-  });
-
-  // Logo: mismo reveal que el hero, siempre visible (no espera scroll)
-  logoWords.forEach(w => {
-    requestAnimationFrame(() => setTimeout(() => w.classList.add('split-in'), 260));
   });
 
   // Headings de sección: revelan al entrar en viewport
@@ -100,7 +94,7 @@ function initTextMotion(){
   }, { threshold: 0.35 });
   sectionHeadings.forEach(h => headingIO.observe(h));
 
-  [...heroHeadings, ...sectionHeadings, ...logoWords].forEach(el => {
+  [...heroHeadings, ...sectionHeadings].forEach(el => {
     el.querySelectorAll('.word-inner').forEach(w => releaseWillChangeOnEnd(w, 'transform'));
   });
 }
@@ -110,34 +104,57 @@ function initTextMotion(){
    de entrada (clip-path + scale + blur→nítido). El <img> en sí no se toca,
    así que sus propios efectos de hover (blanco/negro → color) siguen
    funcionando exactamente igual que antes, sin conflictos de especificidad. */
+function revealImageMask(wrap){
+  if(!wrap || wrap.classList.contains('mask-in')) return;
+  const img = wrap.querySelector('img');
+  const reveal = () => { wrap.classList.add('mask-in'); releaseWillChangeOnEnd(wrap, 'clip-path'); };
+  if(!img || (img.complete && img.naturalWidth > 0)){
+    requestAnimationFrame(reveal);
+  } else {
+    img.addEventListener('load', reveal, { once: true });
+    img.addEventListener('error', reveal, { once: true });
+  }
+}
+// Cuando una foto vive dentro de una tarjeta que también hace su propio fade
+// (.reveal/.reveal-rand/.reveal-seq/.load-reveal), la revelamos junto con esa
+// tarjeta en vez de por su cuenta — si no, el clip-path/blur de la imagen
+// termina mientras la tarjeta sigue en opacity:0 y, al aparecer la tarjeta,
+// la foto ya está nítida: se ve "de golpe" en vez de animada.
+function revealChainedImages(el){
+  el.querySelectorAll('.reveal-mask[data-chained]').forEach(revealImageMask);
+}
+
 function initImageMotion(){
   // .line-card usa position:absolute + inset:0 para la imagen de fondo del
   // grid del home — se excluye del wrapper para no alterar ese layout.
+  // .about-photo es position:sticky: mover el <img> a un wrapper nuevo
+  // mientras el contenedor es sticky deja la imagen pintada en blanco en
+  // Chromium (bug reproducido con Playwright — el DOM/computed style dicen
+  // que todo está visible, pero el compositor nunca la pinta). Se excluye
+  // del wrapper por la misma razón que .line-card: su propio .reveal en el
+  // contenedor ya la anima al aparecer, no necesita el clip-path extra.
   const imgs = document.querySelectorAll('main img');
   const wraps = [];
   imgs.forEach(img => {
     if(img.closest('.line-card')) return;
+    if(img.closest('.about-photo')) return;
     if(img.parentElement && img.parentElement.classList.contains('reveal-mask')) return;
     const wrap = document.createElement('span');
     wrap.className = 'reveal-mask';
     img.parentNode.insertBefore(wrap, img);
     wrap.appendChild(img);
-    wraps.push(wrap);
+    if(wrap.closest('.reveal, .reveal-rand, .reveal-seq, .load-reveal')){
+      wrap.dataset.chained = '1';
+    } else {
+      wraps.push(wrap);
+    }
   });
 
   const imgIO = new IntersectionObserver((entries) => {
     entries.forEach(e => {
       if(!e.isIntersecting) return;
-      const wrap = e.target;
-      const img = wrap.querySelector('img');
-      const reveal = () => { wrap.classList.add('mask-in'); releaseWillChangeOnEnd(wrap, 'clip-path'); };
-      if(img.complete && img.naturalWidth > 0){
-        requestAnimationFrame(reveal);
-      } else {
-        img.addEventListener('load', reveal, { once: true });
-        img.addEventListener('error', reveal, { once: true });
-      }
-      imgIO.unobserve(wrap);
+      revealImageMask(e.target);
+      imgIO.unobserve(e.target);
     });
   }, { threshold: 0.08, rootMargin: '0px 0px -4% 0px' });
   wraps.forEach(w => imgIO.observe(w));
@@ -201,7 +218,7 @@ function initCardTilt(){
       card.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
       card.style.setProperty('--my', (py * 100).toFixed(1) + '%');
     });
-    card.addEventListener('mouseenter', () => card.style.setProperty('--lift', '-8px'));
+    card.addEventListener('mouseenter', () => card.style.setProperty('--lift', '-6px'));
     card.addEventListener('mouseleave', () => {
       card.style.setProperty('--tiltX', '0deg');
       card.style.setProperty('--tiltY', '0deg');
@@ -328,18 +345,20 @@ if(fabToggle && fabGroup){
 const burger = document.getElementById('burgerBtn');
 const mobileMenu = document.getElementById('mobileMenu');
 if(burger && mobileMenu){
-  burger.addEventListener('click', () => {
-    const isOpen = !burger.classList.contains('open');
+  const setMenu = (isOpen) => {
     burger.classList.toggle('open', isOpen);
     mobileMenu.classList.toggle('open', isOpen);
     burger.setAttribute('aria-expanded', String(isOpen));
+    burger.setAttribute('aria-label', isOpen ? 'Cerrar menú' : 'Abrir menú');
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+    document.body.classList.toggle('menu-open', isOpen);
     if(isOpen && header) header.classList.add('scrolled');
+  };
+  burger.addEventListener('click', () => setMenu(!burger.classList.contains('open')));
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && burger.classList.contains('open')) setMenu(false);
   });
-  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-    burger.classList.remove('open');
-    mobileMenu.classList.remove('open');
-    burger.setAttribute('aria-expanded', 'false');
-  }));
 }
 
 // Sequential (non-random) stagger for grids where random order looks messy —
@@ -352,7 +371,7 @@ document.addEventListener('DOMContentLoaded', () => {
     groups.get(parent).push(el);
   });
   groups.forEach(list => {
-    list.forEach((el, i) => { el.dataset.seqDelay = i * 130; });
+    list.forEach((el, i) => { el.dataset.seqDelay = i * 90; });
   });
 });
 
@@ -361,7 +380,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
   const loadEls = document.querySelectorAll('.load-reveal');
   loadEls.forEach((el, i) => {
-    setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); }, 150 + i * 120);
+    setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); revealChainedImages(el); }, 150 + i * 120);
   });
 });
 
@@ -376,13 +395,14 @@ const io = new IntersectionObserver((entries) => {
       const delay = Math.random() * 500;
       const rot = (Math.random() * 6 - 3).toFixed(2);
       el.style.setProperty('--rot', rot + 'deg');
-      setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); }, delay);
+      setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); revealChainedImages(el); }, delay);
     } else if(el.classList.contains('reveal-seq')){
       const delay = Number(el.dataset.seqDelay || 0);
-      setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); }, delay);
+      setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); revealChainedImages(el); }, delay);
     } else {
       el.classList.add('in');
       releaseWillChangeOnEnd(el, 'filter');
+      revealChainedImages(el);
     }
     io.unobserve(el);
   });
