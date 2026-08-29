@@ -19,12 +19,12 @@
     position:relative;
     display:grid; grid-template-columns:0.9fr 1.1fr; gap:0; border-radius:8px; overflow:hidden;
     background:var(--white);
-    border:1px solid rgba(31,27,24,.08);
+    border:1px solid rgba(var(--line-rgb),.08);
     transform:perspective(1200px) rotateX(var(--tiltX)) rotateY(var(--tiltY)) translate3d(0,var(--lift),0);
-    transition:transform .35s var(--ease), box-shadow .35s var(--ease), border-color .5s var(--ease);
+    transition:transform .35s var(--ease), box-shadow .35s var(--ease), border-color .5s var(--ease), background-color .3s var(--ease);
     will-change:transform;
   }
-  .body-row:hover{ box-shadow:0 22px 40px -20px rgba(31,27,24,.28); border-color:var(--coral-soft); }
+  .body-row:hover{ box-shadow:0 22px 40px -20px rgba(var(--line-rgb),.28); border-color:var(--coral-soft); }
   .body-row::after{ content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background:radial-gradient(280px circle at var(--mx) var(--my), rgba(255,87,87,.08), transparent 70%); opacity:0; transition:opacity .4s var(--ease); }
   .body-row:hover::after{ opacity:1; }
   .body-row:nth-child(even){ direction:rtl; }
