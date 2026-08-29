@@ -181,29 +181,27 @@ header.scrolled{
   50%{ background-position:-80% 0; }
   100%{ background-position:-80% 0; }
 }
-nav.links{ display:flex; gap:36px; align-items:center; position:relative; }
+nav.links{ display:flex; gap:2px; align-items:center; position:relative; border-radius:100px; transition:background .4s var(--ease), padding .4s var(--ease); }
 nav.links a{
   font-size:13.5px; font-weight:600; letter-spacing:0.02em;
-  position:relative; padding:4px 0;
+  position:relative; padding:7px 16px; border-radius:22px;
+  transition:background .3s var(--ease), color .3s var(--ease);
 }
-nav.links a::after{
-  content:""; position:absolute; left:0; bottom:0; width:0; height:1.5px; background:var(--coral);
-  transition:width .3s var(--ease);
-}
-nav.links a:hover::after{ width:100%; }
-nav.links a.active{ color:var(--coral-deep); }
+/* Burbuja liviana al pasar el mouse — nada de línea/subrayado, mismo
+   lenguaje "vidrio" que la burbuja del link activo de abajo, más sutil. */
+nav.links a:hover{ background:rgba(0,0,0,.08); }
 
-/* Barra activa: un solo elemento que se desliza entre links (JS la posiciona
-   con transform+width) en vez de que el underline de cada link aparezca y
-   desaparezca por separado. */
-.nav-indicator{
-  position:absolute; left:0; bottom:0; height:1.5px; width:0;
-  background:var(--coral-deep);
-  transform:translate3d(0,0,0);
-  transition:transform var(--motion-medium) var(--ease), width var(--motion-medium) var(--ease);
-  pointer-events:none;
-  view-transition-name: nav-indicator;
+/* Burbuja de vidrio líquido para el link de la página activa — reemplaza
+   la barra deslizante anterior (quedaba como una línea delgada residual,
+   no una cápsula real). Estática, sin JS: menos superficie para que algo
+   la pise por especificidad. */
+nav.links a.active{
+  color:var(--coral-deep); font-weight:700;
+  background:rgba(0,0,0,.15);
+  backdrop-filter:blur(9px); -webkit-backdrop-filter:blur(9px);
+  border:1px solid rgba(255,255,255,.15);
 }
+nav.links a.active:hover{ background:rgba(0,0,0,.15); }
 .nav-cta{ display:flex; align-items:center; gap:22px; }
 .nav-cta .btn{ padding:11px 20px; font-size:13px; }
 
@@ -289,13 +287,41 @@ body.menu-open .fab-group{ opacity:0; pointer-events:none; transition:opacity .3
   .mobile-menu-inner{ padding:0 8px; }
 }
 
-@media(min-width:861px){ .mobile-menu{ display:none; } }
+@media(min-width:768px){ .mobile-menu{ display:none; } }
 
-@media(max-width:860px){
+/* Tablet (768-1024): el nav sigue horizontal, solo se esconde el link
+   menos crítico para dejar más aire — recién colapsa a hamburguesa
+   full-screen bajo 768px. */
+@media(min-width:768px) and (max-width:1024px){
+  nav.links a.hide-tablet{ display:none; }
+}
+
+@media(max-width:767px){
   nav.links{ display:none; }
   .nav-cta .btn span.long{display:none;}
   .burger{ display:flex; }
   .nav-row{ position:relative; z-index:2; }
+}
+
+/* ---------- Header transparente sobre hero (solo home) ----------
+   El resto de las páginas usa .page-hero (fondo cream liso, sin foto) así
+   que su header se queda opaco como siempre — este modificador solo se
+   aplica en index.html, donde el hero es una foto a pantalla completa. */
+header.on-hero{ background:transparent; border-bottom-color:transparent; }
+header.on-hero:not(.scrolled) nav.links a,
+header.on-hero:not(.scrolled) .nav-cta .btn.ghost{
+  color:var(--cream); text-shadow:0 1px 4px rgba(0,0,0,.3);
+}
+header.on-hero:not(.scrolled) nav.links{
+  background:rgba(20,16,14,.38);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  padding:10px 24px;
+}
+header.on-hero:not(.scrolled) .burger span{ background:var(--cream); box-shadow:0 1px 3px rgba(0,0,0,.25); }
+header.on-hero:not(.scrolled) .logo-word{ filter:drop-shadow(0 1px 4px rgba(0,0,0,.3)); }
+header.on-hero.scrolled{
+  background:rgba(248,244,241,.86);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
 }
 
 /* ---------- Page hero (inner pages) ---------- */
@@ -521,12 +547,13 @@ footer{ background:var(--cream-warm); padding:56px 0 30px; }
 .treat-dropdown-menu{
   position:absolute; top:calc(100% + 10px); left:0; min-width:180px;
   background:var(--white);
-  border-radius:8px; overflow:hidden;
+  border-radius:14px; overflow:hidden;
   box-shadow:0 18px 34px -14px rgba(31,27,24,.28); border:1px solid rgba(31,27,24,.08);
-  opacity:0; pointer-events:none; transform:translateY(-8px); transition:opacity .25s var(--ease), transform .25s var(--ease);
+  opacity:0; pointer-events:none; transform:translateY(-8px) scale(.96); transform-origin:top left;
+  transition:opacity .25s var(--ease), transform .25s var(--ease);
   z-index:20;
 }
-.treat-dropdown-menu.open{ opacity:1; pointer-events:auto; transform:translateY(0); }
+.treat-dropdown-menu.open{ opacity:1; pointer-events:auto; transform:translateY(0) scale(1); }
 .treat-dropdown-menu a{ display:block; padding:13px 18px; font-size:14px; font-weight:600; color:var(--ink); transition:background .2s var(--ease); }
 .treat-dropdown-menu a:hover{ background:var(--cream-warm); color:var(--coral-deep); }
 .treat-dropdown-menu a:not(:last-child){ border-bottom:1px solid rgba(31,27,24,.06); }
@@ -570,13 +597,6 @@ footer{ background:var(--cream-warm); padding:56px 0 30px; }
 }
 .fab-group.open .fab-toggle .pulse{ animation:none; opacity:0; }
 @keyframes pulse-ring{ 0%{ transform:scale(1); opacity:.7; } 100%{ transform:scale(1.7); opacity:0; } }
-
-/* ---------- Breath ring (signature motif, used on home hero) ---------- */
-.breath-ring{ position:absolute; top:50%; left:50%; width:120%; aspect-ratio:1/1; transform:translate(-50%,-50%); pointer-events:none; z-index:2; }
-.breath-ring circle{ fill:none; stroke:var(--coral); stroke-width:1; opacity:0; transform-origin:center; animation:breathe 6s var(--ease) 2; animation-fill-mode:forwards; }
-.breath-ring circle:nth-child(2){ animation-delay:2s; }
-.breath-ring circle:nth-child(3){ animation-delay:4s; }
-@keyframes breathe{ 0%{ r:60; opacity:0; } 12%{ opacity:.55; } 60%{ opacity:0; } 100%{ r:220; opacity:0; } }
 
 /* ============================================================
    PREMIUM MOTION SYSTEM
@@ -632,10 +652,6 @@ footer{ background:var(--cream-warm); padding:56px 0 30px; }
   filter:blur(0);
   opacity:1;
 }
-/* El hero (LCP) no debe demorar su primer paint: revela casi de inmediato */
-.hero-photo-frame .reveal-mask,
-.hero-visual .reveal-mask{ transition-duration:.85s, .95s, .65s, .35s; }
-
 /* ---------- Cursor: se usa el cursor normal del sistema (sin cursor personalizado) ---------- */
 
 /* ---------- Spotlight en secciones oscuras ---------- */

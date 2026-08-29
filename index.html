@@ -12,55 +12,64 @@
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <link rel="stylesheet" href="styles.css">
-<link rel="preload" as="image" href="hero-gua-sha-900.webp" imagesrcset="hero-gua-sha-900.webp 900w, hero-gua-sha-1300.webp 1300w" imagesizes="(max-width:520px) 320px, (max-width:940px) 420px, 538px" fetchpriority="high">
+<link rel="preload" as="image" href="hero-vertical-850.webp" media="(max-width:767px)" fetchpriority="high">
+<link rel="preload" as="image" href="hero-horizontal-1300.webp" imagesrcset="hero-horizontal-900.webp 900w, hero-horizontal-1300.webp 1300w" imagesizes="100vw" media="(min-width:768px)" fetchpriority="high">
 <style>
-  .hero{ padding:168px 0 100px; }
-  .hero-grid{ display:grid; grid-template-columns:1.02fr 0.86fr; gap:64px; align-items:center; }
-  .hero h1{ font-size:clamp(44px, 6vw, 78px); margin:22px 0 26px; }
-  .hero p.lead{ font-size:17.5px; color:var(--ink-soft); max-width:440px; line-height:1.65; margin-bottom:36px; }
-  .hero-ctas{ display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
-  .hero-visual{ position:relative; }
-  .hero-photo-frame{ position:relative; aspect-ratio:4/5; border-radius:6px; overflow:hidden; }
-  .hero-photo-frame img{ width:100%; height:100%; object-fit:cover; transform:scale(1.02); }
-  .hero-badge{
-    position:absolute; left:-26px; bottom:36px; background:var(--ink); color:var(--cream);
-    padding:20px 24px; border-radius:4px; max-width:230px; box-shadow:0 24px 40px -18px rgba(31,27,24,.5); z-index:3;
+  /* ---------- Hero full-bleed (home) ---------- */
+  .hero-full{
+    position:relative; height:100vh; height:100svh; min-height:600px; max-height:980px;
+    display:flex; align-items:flex-end; overflow:hidden;
   }
-  .hero-badge p{ font-size:14px; line-height:1.55; color:rgba(248,244,241,.85); }
-
-  /* Entrada premium del hero: el marco de foto "asienta" con leve rebote
-     (spring) y el badge llega después, como si se posara sobre la foto ya
-     instalada — en vez de que todo el bloque visual haga fade parejo. */
-  /* Sin opacity/blur propios aquí a propósito: el <img> adentro ya trae su
-     reveal-mask (clip-path+blur+opacity, ver styles.css) disparado casi al
-     instante por su propio IntersectionObserver. Si este marco también
-     hiciera fade, terminaría de destaparse la foto mientras el marco sigue
-     invisible — al aparecer el marco se vería la foto ya lista, "de golpe".
-     Por eso el marco solo aporta el asentado (scale+translate), nunca oculta. */
-  @keyframes heroFrameIn{
-    from{ transform:scale(.94) translate3d(0,16px,0); }
-    to{ transform:none; }
+  .hero-bg{ position:absolute; inset:0; z-index:0; overflow:hidden; }
+  .hero-bg img{ width:100%; height:100%; object-fit:cover; object-position:center 22%; --hero-zoom:1; }
+  /* Foto horizontal (1376x768) en tablet/desktop, vertical (848x1264) en
+     mobile (<768px, ver <picture> en el HTML) — cada una ya viene encuadrada
+     para su propia orientación, así que "cover" recorta mucho menos que
+     antes con una sola foto forzada a las dos formas. En pantallas muy
+     anchas igual se limita el ancho real de la foto (con --hero-zoom no hay
+     margen para paniar en el eje que ya usa el 100% del ancho) y el resto
+     de la sección se rellena con un tono que combina con el fondo neutro. */
+  @media(min-width:2100px){
+    .hero-full{ background:var(--cream-warm); }
+    .hero-bg{ left:50%; right:auto; width:2000px; transform:translateX(-50%); }
   }
-  @keyframes heroBadgeIn{
-    from{ opacity:0; transform:translate3d(0,16px,0) scale(.94); }
-    to{ opacity:1; transform:none; }
+  .hero-scrim{
+    position:absolute; inset:0;
+    /* Nunca baja de ~.24 de opacidad, ni siquiera en el "hueco" del medio —
+       en mobile el zoom del encuadre puede poner una frente clara justo
+       donde antes había casi cero overlay, dejando el eyebrow ilegible. */
+    background:linear-gradient(180deg, rgba(20,16,14,.32) 0%, rgba(20,16,14,.24) 30%, rgba(20,16,14,.56) 74%, rgba(20,16,14,.86) 100%);
   }
-  .hero-photo-frame{ animation:heroFrameIn 1s var(--spring) .15s both; }
-  .hero-badge{ animation:heroBadgeIn .8s var(--spring) 1.05s both; }
-  .hero-photo-frame .breath-ring circle{ animation-delay:calc(1.6s + var(--bd,0s)); }
-  .hero-photo-frame .breath-ring circle:nth-child(2){ --bd:2s; }
-  .hero-photo-frame .breath-ring circle:nth-child(3){ --bd:4s; }
-  @media(max-width:940px){
-    .hero-grid{ grid-template-columns:1fr; gap:52px; }
-    .hero{ padding:132px 0 70px; }
-    .hero-visual{ max-width:420px; }
-    .hero-badge{
-      position:static; left:auto; bottom:auto; margin-top:18px; max-width:none; width:100%;
-      box-shadow:0 14px 28px -18px rgba(31,27,24,.35); text-align:center;
-    }
+  .hero-full-content{ position:relative; z-index:2; width:100%; padding-bottom:clamp(40px,6vw,72px); }
+  .hero-full-content .eyebrow.on-dark{
+    margin-bottom:20px;
+    text-shadow:0 1px 3px rgba(0,0,0,.55), 0 2px 14px rgba(0,0,0,.4);
   }
-  @media(max-width:520px){
-    .hero-visual{ max-width:none; }
+  .hero-full-content .eyebrow.on-dark::before{ box-shadow:0 0 0 3px var(--ring), 0 1px 4px rgba(0,0,0,.5); }
+  .hero-giant{
+    font-family:'Fraunces',serif; font-weight:500; text-transform:uppercase;
+    font-size:clamp(56px,12vw,168px); line-height:.94; letter-spacing:-.01em;
+    color:rgba(255,255,255,.94); mix-blend-mode:overlay;
+    margin-bottom:clamp(32px,5vw,64px);
+  }
+  .hero-stats-row{
+    display:flex; align-items:flex-start; flex-wrap:wrap; column-gap:clamp(28px,4vw,56px); row-gap:24px;
+    padding-top:26px; border-top:1px solid rgba(248,244,241,.25);
+  }
+  .hero-stat strong{ display:block; font-family:'Fraunces',serif; font-style:italic; font-weight:500; font-size:19px; color:var(--cream); margin-bottom:5px; }
+  .hero-stat span{ display:block; font-size:12.5px; color:rgba(248,244,241,.72); max-width:170px; line-height:1.45; }
+  .hero-cta-block{ display:flex; align-items:center; gap:22px; margin-left:auto; flex-wrap:wrap; }
+  .hero-cta-block p{ font-size:13px; color:rgba(248,244,241,.75); max-width:200px; line-height:1.5; }
+  @media(max-width:1024px){
+    .hero-cta-block{ margin-left:0; }
+  }
+  @media(max-width:767px){
+    .hero-full{ align-items:flex-end; }
+    .hero-stats-row{ flex-direction:column; align-items:flex-start; gap:20px; }
+    .hero-cta-block{ width:100%; }
+    /* En mobile el link ya está en el menú hamburguesa full-screen — el
+       botón secundario acá solo compite espacio con el CTA principal. */
+    .hero-cta-block .treat-dropdown{ display:none; }
   }
 
   .lines{ display:grid; grid-template-columns:1fr 1fr; gap:28px; }
@@ -104,13 +113,13 @@
 </head>
 <body>
 
-<header id="siteHeader">
+<header id="siteHeader" class="on-hero">
   <div class="wrap nav-row">
     <a href="index.html" class="logo" aria-label="Skinergy — Energía para tu piel"><span class="logo-word">Skinergy</span></a>
     <nav class="links">
       <a href="facial.html">Línea Facial</a>
       <a href="body.html">Línea Body</a>
-      <a href="about.html">Sobre mí</a>
+      <a href="about.html" class="hide-tablet">Sobre mí</a>
       <a href="faq.html">FAQ &amp; Agenda</a>
     </nav>
     <div class="nav-cta">
@@ -136,19 +145,29 @@
 
 <main id="home">
 
-  <section class="hero">
-    <div class="wrap hero-grid">
-      <div>
-        <span class="load-reveal eyebrow">Estudio de bienestar facial &amp; corporal — Las Condes</span>
-        <h1 class="load-reveal">Energía<br>para <em>tu piel</em></h1>
-        <p class="load-reveal lead">Una experiencia boutique donde el autocuidado se vive como un ritual: del rostro al cuerpo, con resultados visibles y sin agredir tu piel — pensada para quienes quieran transformar su cuidado en un hábito consciente.</p>
-        <div class="load-reveal hero-ctas">
+  <section class="hero-full">
+    <div class="hero-bg">
+      <picture>
+        <source media="(max-width:767px)" srcset="hero-vertical-850.webp">
+        <img src="hero-horizontal-1300.webp" srcset="hero-horizontal-900.webp 900w, hero-horizontal-1300.webp 1300w" sizes="100vw" alt="Tratamiento facial en Skinergy" loading="eager" fetchpriority="high" decoding="async">
+      </picture>
+      <div class="hero-scrim"></div>
+    </div>
+    <div class="wrap hero-full-content">
+      <span class="load-reveal eyebrow on-dark">Estudio de bienestar facial &amp; corporal — Las Condes</span>
+      <h1 class="load-reveal hero-giant">Energía</h1>
+      <div class="load-reveal hero-stats-row">
+        <div class="hero-stat"><strong>Yoga Facial</strong><span>Tonificación &amp; lifting natural, sin agujas</span></div>
+        <div class="hero-stat"><strong>Deep Renewal</strong><span>Limpieza, peeling y microneedling</span></div>
+        <div class="hero-stat"><strong>Body</strong><span>Sculpt, Drain &amp; Relax</span></div>
+        <div class="hero-cta-block">
+          <p>Bienestar facial y corporal en Las Condes — resultados visibles, sin agredir tu piel.</p>
           <a class="btn" href="https://wa.me/56944476609?text=Hola%2C%20quiero%20agendar%20una%20sesi%C3%B3n%20en%20Skinergy" target="_blank" rel="noopener">
-            Agendar por WhatsApp
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            Agendar
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg>
           </a>
           <div class="treat-dropdown">
-            <button class="btn ghost" id="treatToggle" aria-expanded="false" aria-haspopup="true">
+            <button class="btn ghost on-dark" id="treatToggle" aria-expanded="false" aria-haspopup="true">
               Ver tratamientos
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
             </button>
@@ -157,20 +176,6 @@
               <a href="body.html">Línea Body</a>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div class="hero-visual">
-        <div class="hero-photo-frame">
-          <img src="hero-gua-sha-900.webp" srcset="hero-gua-sha-900.webp 900w, hero-gua-sha-1300.webp 1300w" sizes="(max-width:520px) 320px, (max-width:940px) 420px, 538px" alt="Tratamiento facial en Skinergy" loading="eager" fetchpriority="high" decoding="async">
-          <svg class="breath-ring" viewBox="-160 -160 320 320" preserveAspectRatio="xMidYMid meet">
-            <circle cx="0" cy="0" r="60"></circle>
-            <circle cx="0" cy="0" r="60"></circle>
-            <circle cx="0" cy="0" r="60"></circle>
-          </svg>
-        </div>
-        <div class="hero-badge">
-          <p>Yoga Facial, Deep Renewal, Add-ons y Body — múltiples formas de cuidar tu rostro y tu cuerpo, del entrenamiento muscular a la regeneración profunda.</p>
         </div>
       </div>
     </div>

@@ -133,11 +133,14 @@ function initImageMotion(){
   // que todo está visible, pero el compositor nunca la pinta). Se excluye
   // del wrapper por la misma razón que .line-card: su propio .reveal en el
   // contenedor ya la anima al aparecer, no necesita el clip-path extra.
+  // .hero-bg es el fondo full-bleed del hero (LCP) — debe pintar apenas
+  // carga, sin esperar ningún reveal, así que tampoco pasa por el wrapper.
   const imgs = document.querySelectorAll('main img');
   const wraps = [];
   imgs.forEach(img => {
     if(img.closest('.line-card')) return;
     if(img.closest('.about-photo')) return;
+    if(img.closest('.hero-bg')) return;
     if(img.parentElement && img.parentElement.classList.contains('reveal-mask')) return;
     const wrap = document.createElement('span');
     wrap.className = 'reveal-mask';
@@ -162,17 +165,19 @@ function initImageMotion(){
 
 /* ---------- 3. HERO — parallax + scale-on-scroll (profundidad) ---------- */
 function initHeroParallax(){
-  const heroSection = document.querySelector('.hero, .page-hero');
-  const heroVisual = document.querySelector('.hero-visual');
-  const heroImg = document.querySelector('.hero-photo-frame img, .hero-visual img');
+  const heroSection = document.querySelector('.hero-full, .page-hero');
+  const heroImg = document.querySelector('.hero-bg img, .hero-photo-frame img');
   if(!heroSection || reduceMotion) return;
+  // --hero-zoom deja que CSS controle el encuadre por breakpoint (ej. más
+  // cerca en mobile) sin pelear con el transform que este mismo scroll
+  // handler escribe inline en cada frame.
+  const baseZoom = heroImg ? (parseFloat(getComputedStyle(heroImg).getPropertyValue('--hero-zoom')) || 1) : 1;
 
   let ticking = false;
   function update(){
     const rect = heroSection.getBoundingClientRect();
     const progress = Math.min(Math.max(1 - (rect.bottom / (rect.height + window.innerHeight)), 0), 1);
-    if(heroVisual) heroVisual.style.transform = `scale(${1 + progress * 0.045})`;
-    if(heroImg) heroImg.style.transform = `translate3d(0, ${progress * -22}px, 0) scale(1.02)`;
+    if(heroImg) heroImg.style.transform = `translate3d(0, ${progress * -30}px, 0) scale(${baseZoom + progress * 0.06})`;
     ticking = false;
   }
   function onScroll(){
@@ -239,38 +244,6 @@ function initDarkSpotlight(){
   });
 }
 
-/* ---------- 8. NAV INDICATOR — barra activa que se desplaza entre links ----------
-   En vez de un underline que aparece/desaparece por link, un único elemento
-   se mueve (transform + width) del link anterior al nuevo. En desktop además
-   seguí al hover y vuelve al activo al salir. Entre páginas (navegación real,
-   no SPA) el View Transitions API lo mueve solo vía view-transition-name. */
-function initNavIndicator(){
-  const nav = document.querySelector('nav.links');
-  const active = nav && nav.querySelector('a.active');
-  if(!nav || !active) return;
-
-  const indicator = document.createElement('span');
-  indicator.className = 'nav-indicator';
-  indicator.setAttribute('aria-hidden', 'true');
-  nav.appendChild(indicator);
-
-  function moveTo(el){
-    const navRect = nav.getBoundingClientRect();
-    const r = el.getBoundingClientRect();
-    indicator.style.width = r.width + 'px';
-    indicator.style.transform = `translate3d(${(r.left - navRect.left).toFixed(1)}px,0,0)`;
-  }
-
-  moveTo(active);
-  window.addEventListener('resize', () => moveTo(active), { passive:true });
-  if(document.fonts) document.fonts.ready.then(() => moveTo(active));
-
-  if(prefersFullMotion){
-    nav.querySelectorAll('a').forEach(a => a.addEventListener('mouseenter', () => moveTo(a)));
-    nav.addEventListener('mouseleave', () => moveTo(active));
-  }
-}
-
 /* ============================================================
    INICIALIZACIÓN
    ============================================================ */
@@ -282,7 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initMagnetic();
   initCardTilt();
   initDarkSpotlight();
-  initNavIndicator();
 });
 
 /* ============================================================
