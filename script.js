@@ -1,10 +1,17 @@
 /* ============================================================
    SKINERGY — PREMIUM MOTION SYSTEM
-   Vanilla JS, sin dependencias. Movimiento forzado a pedido: ignora
-   prefers-reduced-motion, las animaciones siempre corren completas.
+   Vanilla JS, sin dependencias. La experiencia visual (reveals, stagger,
+   fills de botón) se mantiene con prefers-reduced-motion activo — no se
+   apaga el motion, se reduce (ver el bloque @media al final de styles.css:
+   menos blur, menos desplazamiento, transiciones más cortas). Lo que sí se
+   desactiva del todo bajo reduced-motion son los efectos que dependen de
+   movimiento continuo del cursor/scroll y no de una transición con destino
+   fijo — parallax del hero, tilt 3D, magnetismo de botones, spotlight y la
+   rotación aleatoria de reveal-rand — porque ahí no hay "menos", son
+   movimiento o no son nada.
    ============================================================ */
 
-const reduceMotion = false;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
 const prefersFullMotion = !reduceMotion && hasFinePointer;
 
@@ -359,27 +366,41 @@ document.addEventListener('DOMContentLoaded', () => {
 // Scroll reveal (fade + translateY, triggered on entering viewport)
 // Elements with "reveal-rand" pop in at a random delay instead of all at once,
 // so grids (categories, treatments, cards) feel more lively — like a random cascade.
-const io = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if(!e.isIntersecting) return;
-    const el = e.target;
-    if(el.classList.contains('reveal-rand')){
-      const delay = Math.random() * 500;
-      const rot = (Math.random() * 6 - 3).toFixed(2);
-      el.style.setProperty('--rot', rot + 'deg');
-      setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); revealChainedImages(el); }, delay);
-    } else if(el.classList.contains('reveal-seq')){
-      const delay = Number(el.dataset.seqDelay || 0);
-      setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); revealChainedImages(el); }, delay);
-    } else {
-      el.classList.add('in');
-      releaseWillChangeOnEnd(el, 'filter');
-      revealChainedImages(el);
-    }
-    io.unobserve(el);
-  });
-}, { threshold:0.05, rootMargin:'0px 0px -2% 0px' });
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+//
+// Envuelto en DOMContentLoaded a propósito (antes era top-level, corría apenas
+// se parseaba el script): si una fila/card ya estaba visible en el viewport al
+// cargar, el IntersectionObserver podía disparar su callback ANTES de que
+// initImageMotion() (que corre en el DOMContentLoaded de más arriba) alcanzara
+// a envolver su <img> en .reveal-mask. revealChainedImages() entonces no
+// encontraba nada que revelar, y esa imagen se quedaba en blur(15px)/opacity:0
+// para siempre — nada la volvía a intentar. Bug real, reproducido con
+// Playwright (siempre la primera fila/card visible sin scroll). Al registrar
+// esto como un DOMContentLoaded más, corre después de initImageMotion() por
+// orden de registro, así el wrapper ya existe pase lo que pase con el timing
+// del observer.
+document.addEventListener('DOMContentLoaded', () => {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(!e.isIntersecting) return;
+      const el = e.target;
+      if(el.classList.contains('reveal-rand')){
+        const delay = Math.random() * 500;
+        const rot = (Math.random() * 6 - 3).toFixed(2);
+        el.style.setProperty('--rot', rot + 'deg');
+        setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); revealChainedImages(el); }, delay);
+      } else if(el.classList.contains('reveal-seq')){
+        const delay = Number(el.dataset.seqDelay || 0);
+        setTimeout(() => { el.classList.add('in'); releaseWillChangeOnEnd(el, 'filter'); revealChainedImages(el); }, delay);
+      } else {
+        el.classList.add('in');
+        releaseWillChangeOnEnd(el, 'filter');
+        revealChainedImages(el);
+      }
+      io.unobserve(el);
+    });
+  }, { threshold:0.05, rootMargin:'0px 0px -2% 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+});
 
 // FAQ accordion
 document.querySelectorAll('.faq-item').forEach(item => {

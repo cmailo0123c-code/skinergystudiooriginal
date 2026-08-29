@@ -5,6 +5,42 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 <title>Skinergy — Energía para tu piel</title>
 <meta name="description" content="Skinergy, estudio boutique de bienestar facial y corporal en Vitacura 2902, Las Condes. Yoga Facial, Deep Renewal y tratamientos Body.">
+<link rel="canonical" href="https://skinergy.studio/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Skinergy">
+<meta property="og:locale" content="es_CL">
+<meta property="og:url" content="https://skinergy.studio/">
+<meta property="og:title" content="Skinergy — Energía para tu piel">
+<meta property="og:description" content="Skinergy, estudio boutique de bienestar facial y corporal en Vitacura 2902, Las Condes. Yoga Facial, Deep Renewal y tratamientos Body.">
+<meta property="og:image" content="https://skinergy.studio/hero-horizontal.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Skinergy — Energía para tu piel">
+<meta name="twitter:description" content="Skinergy, estudio boutique de bienestar facial y corporal en Vitacura 2902, Las Condes. Yoga Facial, Deep Renewal y tratamientos Body.">
+<meta name="twitter:image" content="https://skinergy.studio/hero-horizontal.jpg">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "DaySpa",
+  "name": "Skinergy — Energía para tu piel",
+  "image": "https://skinergy.studio/hero-horizontal.jpg",
+  "url": "https://skinergy.studio/",
+  "telephone": "+56944476609",
+  "priceRange": "$$",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Av. Vitacura 2902",
+    "addressLocality": "Las Condes",
+    "addressRegion": "Región Metropolitana",
+    "addressCountry": "CL"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": -33.4123653,
+    "longitude": -70.6027542
+  },
+  "sameAs": ["https://www.instagram.com/skinergy.studio/"]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;1,9..144,400&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -75,9 +111,9 @@
 
   .lines{ display:grid; grid-template-columns:1fr 1fr; gap:28px; }
   @media(max-width:800px){ .lines{ grid-template-columns:1fr; } }
-  .line-card{ position:relative; border-radius:6px; overflow:hidden; aspect-ratio:3/4; display:flex; flex-direction:column; justify-content:flex-end; isolation:isolate; box-shadow:0 0px 0px -18px rgba(var(--line-rgb),0); transition:transform .35s var(--ease), box-shadow .35s var(--ease); }
+  .line-card{ position:relative; border-radius:6px; overflow:hidden; aspect-ratio:3/4; display:flex; flex-direction:column; justify-content:flex-end; isolation:isolate; box-shadow:0 0px 0px -18px rgba(var(--line-rgb),0); transition:transform var(--motion-normal) var(--ease), box-shadow var(--motion-normal) var(--ease); }
   .line-card:hover{ transform:translate3d(0,-6px,0); box-shadow:0 22px 40px -18px rgba(var(--line-rgb),.32); }
-  .line-card img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.08); transition:filter 1s var(--ease), transform 1.2s var(--ease); z-index:-2; }
+  .line-card img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.08); transition:filter var(--motion-cinematic) var(--ease), transform var(--motion-cinematic-lg) var(--ease); z-index:-2; }
   .line-card::before{ content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(var(--line-rgb),0) 30%, rgba(var(--line-rgb),.85) 100%); z-index:-1; }
   .line-card:hover img{ filter:grayscale(0) contrast(1.02) saturate(1.1); transform:scale(1.045); }
   .line-card .tag{ position:absolute; top:22px; left:22px; font-size:11px; font-weight:700; letter-spacing:.18em; text-transform:uppercase; color:var(--cream); background:rgba(255,87,87,.92); padding:7px 12px; border-radius:100px; }
@@ -85,14 +121,14 @@
   .line-card h3{ font-size:30px; color:var(--white); margin-bottom:10px; }
   .line-card p{ font-size:14px; color:rgba(248,244,241,.82); line-height:1.6; max-width:340px; margin-bottom:18px; }
   .line-card .link{ display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:var(--white); border-bottom:1px solid var(--coral); padding-bottom:3px; width:fit-content; }
-  .line-card .link svg{ width:14px; height:14px; transition:transform .3s var(--ease); }
+  .line-card .link svg{ width:14px; height:14px; transition:transform var(--motion-normal) var(--ease); }
   .line-card:hover .link svg{ transform:translateX(4px); }
 
   .categories{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:rgba(var(--line-rgb),.1); border:1px solid rgba(var(--line-rgb),.1); border-radius:6px; overflow:hidden; }
   @media(max-width:900px){ .categories{ grid-template-columns:1fr; } }
-  .cat{ --tiltX:0deg; --tiltY:0deg; --lift:0px; --mx:50%; --my:50%; position:relative; background:var(--white); padding:34px 26px; transform:perspective(1000px) rotateX(var(--tiltX)) rotateY(var(--tiltY)) translate3d(0,var(--lift),0); transition:background .5s var(--ease), transform .35s var(--ease), box-shadow .35s var(--ease); }
+  .cat{ --tiltX:0deg; --tiltY:0deg; --lift:0px; --mx:50%; --my:50%; position:relative; background:var(--white); padding:34px 26px; transform:perspective(1000px) rotateX(var(--tiltX)) rotateY(var(--tiltY)) translate3d(0,var(--lift),0); transition:background var(--motion-smooth) var(--ease), transform var(--motion-normal) var(--ease), box-shadow var(--motion-normal) var(--ease); }
   .cat:hover{ background:var(--cream-warm); box-shadow:0 20px 32px -22px rgba(var(--line-rgb),.3); }
-  .cat::after{ content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(220px circle at var(--mx) var(--my), rgba(255,87,87,.10), transparent 70%); opacity:0; transition:opacity .4s var(--ease); }
+  .cat::after{ content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(220px circle at var(--mx) var(--my), rgba(255,87,87,.10), transparent 70%); opacity:0; transition:opacity var(--motion-normal) var(--ease); }
   .cat:hover::after{ opacity:1; }
   .cat .n{ font-family:'Fraunces',serif; font-style:italic; color:var(--coral); font-size:15px; margin-bottom:14px; display:block;}
   .cat h4{ font-family:'Fraunces',serif; font-weight:500; font-size:19px; margin-bottom:8px; }
@@ -100,9 +136,9 @@
 
   .testi-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
   @media(max-width:900px){ .testi-grid{ grid-template-columns:1fr; } }
-  .testi{ --tiltX:0deg; --tiltY:0deg; --lift:0px; --mx:50%; --my:50%; position:relative; background:var(--white); border:1px solid rgba(var(--line-rgb),.08); border-radius:6px; padding:30px 28px; transform:perspective(1000px) rotateX(var(--tiltX)) rotateY(var(--tiltY)) translate3d(0,var(--lift),0); transition:transform .35s var(--ease), box-shadow .35s var(--ease), border-color .5s var(--ease); }
+  .testi{ --tiltX:0deg; --tiltY:0deg; --lift:0px; --mx:50%; --my:50%; position:relative; background:var(--white); border:1px solid rgba(var(--line-rgb),.08); border-radius:6px; padding:30px 28px; transform:perspective(1000px) rotateX(var(--tiltX)) rotateY(var(--tiltY)) translate3d(0,var(--lift),0); transition:transform var(--motion-normal) var(--ease), box-shadow var(--motion-normal) var(--ease), border-color var(--motion-smooth) var(--ease); }
   .testi:hover{ box-shadow:0 20px 32px -22px rgba(var(--line-rgb),.28); border-color:var(--coral); }
-  .testi::after{ content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background:radial-gradient(220px circle at var(--mx) var(--my), rgba(255,87,87,.10), transparent 70%); opacity:0; transition:opacity .4s var(--ease); }
+  .testi::after{ content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; background:radial-gradient(220px circle at var(--mx) var(--my), rgba(255,87,87,.10), transparent 70%); opacity:0; transition:opacity var(--motion-normal) var(--ease); }
   .testi:hover::after{ opacity:1; }
   .stars{ display:flex; gap:4px; margin-bottom:18px; }
   .stars svg{ width:15px; height:15px; fill:var(--coral); }
